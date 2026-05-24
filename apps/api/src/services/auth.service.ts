@@ -18,7 +18,7 @@ export async function registerUser(input: { email: string; password: string; use
         email: input.email,
         passwordHash: await hashPassword(input.password),
         // Store provided username (required) and optional full name
-        username: input.username?.trim() ?? '',
+        username: input.username?.trim() ?? null,
         name: input.name?.trim() ?? null,
       },
       select: { id: true, email: true, username: true, name: true, createdAt: true },
