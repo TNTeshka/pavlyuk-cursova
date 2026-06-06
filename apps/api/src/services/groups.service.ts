@@ -22,7 +22,7 @@ export async function createGroup(input: { name: string; description?: string; p
       owner: { connect: { id: input.userId } }, // set owner
       members: { connect: { id: input.userId } }, // owner is also a member
     },
-    include: { members: true },
+    include: { members: true, owner: true, _count: { select: { tasks: true, members: true } } },
   });
 }
 
@@ -47,7 +47,7 @@ export async function addUserToGroup(groupId: string, userId: string) {
   return prisma.group.update({
     where: { id: groupId },
     data: { members: { connect: { id: userId } } },
-    include: { members: true },
+    include: { members: true, owner: true, _count: { select: { tasks: true, members: true } } },
   });
 }
 

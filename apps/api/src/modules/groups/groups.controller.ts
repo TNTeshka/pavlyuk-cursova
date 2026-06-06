@@ -11,9 +11,19 @@ export const createGroup = asyncHandler(async (req: AuthedRequest, res: Response
   const { name, description, password } = req.body as { name: string; description?: string; password?: string };
   if (!name?.trim()) throw new ApiError(400, "VALIDATION_ERROR", "Group name required");
   const group = await groupsService.createGroup({ name: name.trim(), description, password, userId: req.user!.id });
+  // Transform created group to include UI fields
+  const transformed = {
+    ...group,
+    tasksCount: 0,
+    membersCount: group._count?.members ?? (group.members?.length ?? 0),
+    ownerName: group.owner?.name ?? group.owner?.email ?? "-",
+    // Clean up Prisma specific fields
+    _count: undefined,
+    owner: undefined,
+  };
   // Emit group creation event
-  io?.emit("group:created", { group });
-  return res.status(201).json({ group });
+  io?.emit("group:created", { group: transformed });
+  return res.status(201).json({ group: transformed });
 });
 
 export const listGroups = asyncHandler(async (req: AuthedRequest, res: Response) => {
