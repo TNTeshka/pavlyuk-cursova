@@ -33,7 +33,7 @@ export async function listGroups(userId: string) {
     include: {
       members: true,
       owner: true,
-      _count: { select: { tasks: true } }
+      _count: { select: { tasks: true, members: true } }
     }
   });
 }

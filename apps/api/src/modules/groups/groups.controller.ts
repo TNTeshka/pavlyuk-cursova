@@ -1,4 +1,5 @@
 import { io } from "../../socket";
+import type { AuthedRequest } from "../../middleware/auth.js";
 import type { Response } from "express";
 import * as groupsService from "../../services/groups.service.js";
 import { verifyPassword } from "../../utils/password.js";
@@ -21,8 +22,11 @@ export const listGroups = asyncHandler(async (req: AuthedRequest, res: Response)
   const transformed = groups.map((g: any) => ({
     ...g,
     tasksCount: g._count?.tasks ?? 0,
-    // Remove Prisma specific _count to keep payload clean
+    membersCount: g._count?.members ?? 0,
+    ownerName: g.owner?.name ?? g.owner?.email ?? "-",
+    // Remove Prisma specific fields to keep payload clean
     _count: undefined,
+    owner: undefined,
   }));
   return res.json(transformed);
 });

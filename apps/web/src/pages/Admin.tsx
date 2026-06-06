@@ -14,6 +14,8 @@ interface GroupRow {
   name: string;
   description?: string | null;
   tasksCount?: number;
+  ownerName?: string;
+  membersCount?: number;
 }
 
 export function Admin() {
@@ -90,7 +92,9 @@ export function Admin() {
             <tr className="border-b">
               <th className="text-left p-2 text-[var(--color-text)]">ID</th>
               <th className="text-left p-2 text-[var(--color-text)]">Name</th>
-              <th className="text-left p-2 text-[var(--color-text)]">Description</th>
+              <th className="text-left p-2 text-[var(--color-text)]">Owner</th>
+                <th className="text-left p-2 text-[var(--color-text)]">Members</th>
+                <th className="text-left p-2 text-[var(--color-text)]">Description</th>
               <th className="text-left p-2 text-[var(--color-text)]">Tasks</th>
             </tr>
           </thead>
@@ -99,6 +103,8 @@ export function Admin() {
               <tr key={g.id} className="border-b">
                 <td className="p-2 text-sm text-[var(--color-text)] break-all text-[var(--color-text)]">{g.id}</td>
                 <td className="p-2 text-sm text-[var(--color-text)] text-[var(--color-text)]">{g.name}</td>
+                <td className="p-2 text-sm text-[var(--color-text)]">{g.ownerName ?? "-"}</td>
+                <td className="p-2 text-sm text-[var(--color-text)]">{g.membersCount ?? "-"}</td>
                 <td className="p-2 text-sm text-[var(--color-text)] text-[var(--color-muted)]">{g.description ?? "-"}</td>
                 <td className="p-2 text-sm text-[var(--color-text)]">{g.tasksCount ?? "-"}</td>
               </tr>
