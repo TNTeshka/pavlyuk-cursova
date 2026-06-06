@@ -17,7 +17,14 @@ export const createGroup = asyncHandler(async (req: AuthedRequest, res: Response
 
 export const listGroups = asyncHandler(async (req: AuthedRequest, res: Response) => {
   const groups = await groupsService.listGroups(req.user!.id);
-  return res.json(groups);
+  // Transform groups to include a plain tasksCount field for the admin UI
+  const transformed = groups.map((g: any) => ({
+    ...g,
+    tasksCount: g._count?.tasks ?? 0,
+    // Remove Prisma specific _count to keep payload clean
+    _count: undefined,
+  }));
+  return res.json(transformed);
 });
 
 
