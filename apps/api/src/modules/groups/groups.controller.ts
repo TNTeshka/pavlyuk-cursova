@@ -1,5 +1,5 @@
 import { io } from "../../socket";
-import type { AuthedRequest } from "../../middleware/auth.js";
+import type { Response } from "express";
 import * as groupsService from "../../services/groups.service.js";
 import { verifyPassword } from "../../utils/password.js";
 import { prisma } from "../../prisma.js";
