@@ -76,6 +76,9 @@ export function GroupTasks() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [quickFilter, setQuickFilter] = useState(""); // "", "high", "overdue", "today"
+
 
 
 
