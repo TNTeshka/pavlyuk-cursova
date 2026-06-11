@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
 import { useTaskStore, Task } from "../store/taskStore";
+import { Button } from "../components/Button";
 
 export function Dashboard() {
   const tasks = Object.values(useTaskStore(state => state.tasks));
@@ -61,13 +62,9 @@ export function Dashboard() {
       <section className="card">
         <div className="card-header">
           <h1 className="card-title">Dashboard</h1>
-          <p className="card-subtitle">Your calm weekly pulse and delivery momentum.</p>
-          <button
-            className="btn btn--primary btn--sm"
-            onClick={() => setShowPriority(!showPriority)}
-          >
+          <Button variant="primary" size="sm" onClick={() => setShowPriority(!showPriority)}>
             {showPriority ? "Show Status" : "Show Priority"}
-          </button>
+          </Button>
           <div className="stat-item">
             <div className="stat-label">Completion</div>
             <div className="stat-value">{completionRate}%</div>

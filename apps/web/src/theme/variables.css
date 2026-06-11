@@ -33,10 +33,10 @@
 [data-theme="light"] {
   --color-bg: #e6f4fa;
   --color-surface: linear-gradient(135deg, #2d486e -90%, #515a9a 45%, #5763a6 20%);
-  --color-surface-2: linear-gradient(135deg, #294162 0%, #40477a 45%, #5763a6 100%);
+  --color-surface-2: linear-gradient(135deg, #294162 -20%, #40477a 45%, #5763a6 100%);
   --color-surface-3: rgba(0, 0, 0, 0.05);
   --color-text: #f1f1f1;
-  --color-muted: #7c7d7e;
+  --color-muted: #afb0b4;
   --color-primary: #453497; /* keep primary */
   --color-border: #374151;
   --color-header-text: #000000;
