@@ -61,15 +61,15 @@ export function Dashboard() {
     <div className="dashboard-page">
       <section className="card">
         <div className="card-header">
-          <h1 className="card-title">Dashboard</h1>
-          <Button variant="primary" size="sm" onClick={() => setShowPriority(!showPriority)}>
-            {showPriority ? "Show Status" : "Show Priority"}
-          </Button>
-          <div className="stat-item">
-            <div className="stat-label">Completion</div>
-            <div className="stat-value">{completionRate}%</div>
-          </div>
-        </div>
+  <h1 className="card-title">Dashboard</h1>
+  <Button variant="primary" size="sm" onClick={() => setShowPriority(!showPriority)}>
+    {showPriority ? "Show Status" : "Show Priority"}
+  </Button>
+</div>
+<div className="stat-item">
+  <div className="stat-label">Completion</div>
+  <div className="stat-value">{completionRate}%</div>
+</div>
         {showPriority ? (
           // Priority view
           <>
