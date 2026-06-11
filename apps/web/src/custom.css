@@ -400,11 +400,13 @@ select.form-select option {
   transform: none;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
+.task-card { background: var(--color-surface); }
 
 /* Prevent ghost button scaling on task name hover within task cards */
 /* Make task name clickable (pointer cursor) */
 .task-card .truncate {
   cursor: pointer;
+  background: var(--color-surface-3);
 }
 
 
