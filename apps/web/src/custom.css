@@ -406,6 +406,10 @@ select.form-select option {
 /* Make task name clickable (pointer cursor) */
 .task-card .btn.btn--ghost {
   background: var(--color-surface-3);
+  border: none;
+}
+.task-card .btn.btn--ghost:hover {
+  transform: none;
 }
 .task-card .truncate {
   cursor: pointer;
