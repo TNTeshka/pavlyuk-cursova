@@ -1,0 +1,6 @@
+/* Global stylesheet – only imports custom vanilla CSS */
+@import "./theme/variables.css";
+@import "./custom.css";
+@import "./utils.css";
+
+

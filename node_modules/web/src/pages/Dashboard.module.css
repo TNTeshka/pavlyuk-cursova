@@ -1,0 +1,74 @@
+.container {
+  background: rgba(17, 28, 51, 0.75);
+  border: 1px solid var(--color-border-soft);
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+	.cards {
+	  display: flex;
+	  gap: 16px;
+	  margin-bottom: 24px;
+	}
+
+	.card {
+	  flex: 1;
+  background: rgba(11, 18, 32, 0.55);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: left;
+	}
+
+.icon {
+	  width: 40px;
+	  height: 40px;
+  margin: 0 0 10px;
+  background: rgba(99, 102, 241, 0.14);
+	  border-radius: 50%;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+	}
+
+.card strong {
+	  display: block;
+	  margin-bottom: 4px;
+  font-weight: 700;
+  color: var(--color-muted);
+	}
+
+.number {
+	  font-size: 2rem;
+  font-weight: 800;
+	  display: block;
+	  margin-top: 4px;
+	}
+
+	.progressBar {
+	  margin-top: 20px;
+	}
+
+	.progressLabel {
+	  margin-bottom: 6px;
+  color: var(--color-muted);
+	}
+
+	.barBackground {
+	  height: 12px;
+  background: rgba(148, 163, 184, 0.12);
+  border-radius: 999px;
+	  overflow: hidden;
+	}
+
+	.barFill {
+	  height: 100%;
+	  background: var(--color-primary);
+	}
+
+	.loading {
+  color: var(--color-muted);
+	}
+
+	.error {
+	  color: crimson;
+	}

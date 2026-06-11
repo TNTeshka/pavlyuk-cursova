@@ -1,0 +1,1 @@
+/* Tailwind config disabled – no longer used */
