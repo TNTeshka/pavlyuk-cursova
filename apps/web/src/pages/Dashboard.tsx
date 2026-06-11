@@ -68,6 +68,10 @@ export function Dashboard() {
           >
             {showPriority ? "Show Status" : "Show Priority"}
           </button>
+          <div className="stat-item">
+            <div className="stat-label">Completion</div>
+            <div className="stat-value">{completionRate}%</div>
+          </div>
         </div>
         {showPriority ? (
           // Priority view
@@ -113,10 +117,6 @@ export function Dashboard() {
         ) : (
           // Status view (existing)
           <>
-            <div className="stat-item">
-              <div className="stat-label">Completion</div>
-              <div className="stat-value">{completionRate}%</div>
-            </div>
             {/* You can add loading/error handling as needed */}
             <div className="progress-section">
               <div className="progress-row">
