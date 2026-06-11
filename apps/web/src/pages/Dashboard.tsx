@@ -73,18 +73,6 @@ export function Dashboard() {
         {showPriority ? (
           // Priority view
           <>
-            <div className="stat-item">
-              <div className="stat-label">High</div>
-              <div className="stat-value">{byPriority.HIGH}</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-label">Medium</div>
-              <div className="stat-value">{byPriority.MEDIUM}</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-label">Low</div>
-              <div className="stat-value">{byPriority.LOW}</div>
-            </div>
             <div className="progress-section">
               <div className="progress-row">
                 <span className="progress-label">High</span>
