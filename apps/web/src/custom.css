@@ -404,9 +404,11 @@ select.form-select option {
 
 /* Prevent ghost button scaling on task name hover within task cards */
 /* Make task name clickable (pointer cursor) */
+.task-card .btn.btn--ghost {
+  background: var(--color-surface-3);
+}
 .task-card .truncate {
   cursor: pointer;
-  background: var(--color-surface-3);
 }
 
 
