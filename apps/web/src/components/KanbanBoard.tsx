@@ -191,7 +191,7 @@ export function KanbanBoard({
 
               <div className="mt-3 flex gap-2">
                 <input
-                  className="form-input"
+                  className="form-input bg-[var(--color-surface-7)]"
                   value={drafts[status]}
                   placeholder="Quick add…"
                   onChange={(e) => setDrafts((d) => ({ ...d, [status]: e.target.value }))}
@@ -213,7 +213,7 @@ export function KanbanBoard({
                 />
                 <Button
                   size="sm"
-                  variant="secondary"
+                  variant="secondary" className="bg-[var(--color-surface-7)]"
                   onClick={() => {
                     const title = drafts[status].trim();
                     if (!title || busyStatus[status]) return;
@@ -233,7 +233,7 @@ export function KanbanBoard({
                 </Button>
                 <Button
                   size="sm"
-                  variant="secondary"
+                  variant="secondary" className="bg-[var(--color-surface-7)]"
                   onClick={() => {
                     console.log('Extra button clicked');
                   }}
