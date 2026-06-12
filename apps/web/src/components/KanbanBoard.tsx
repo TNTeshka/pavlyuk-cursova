@@ -191,7 +191,7 @@ export function KanbanBoard({
 
               <div className="mt-3 flex gap-2">
                 <input
-                  className="form-input bg-[var(--color-surface-4)]"
+                  className="form-input"
                   value={drafts[status]}
                   placeholder="Quick add…"
                   onChange={(e) => setDrafts((d) => ({ ...d, [status]: e.target.value }))}
@@ -214,7 +214,6 @@ export function KanbanBoard({
                 <Button
                   size="sm"
                   variant="secondary"
-                  className="bg-[var(--color-surface-4)]"
                   onClick={() => {
                     const title = drafts[status].trim();
                     if (!title || busyStatus[status]) return;
@@ -231,6 +230,15 @@ export function KanbanBoard({
                   disabled={loading || busyStatus[status] || drafts[status].trim().length === 0}
                 >
                   Add
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => {
+                    console.log('Extra button clicked');
+                  }}
+                >
+                  Extra
                 </Button>
               </div>
 
@@ -261,7 +269,7 @@ export function KanbanBoard({
                             </div>
                           )}
                           {(t.deadline ?? t.dueDate) && (
-                            <div className={`mt-2 text-xs ${overdue ? "text-rose-200" : "text-text"}`}>
+                            <div className={`mt-2 text-xs ${overdue ? "text-rose-200" : "text-muted"}`}>
                               📅 Due <time dateTime={t.deadline ?? t.dueDate}>{formatDueDate(t.deadline ?? t.dueDate) ?? new Date(t.deadline ?? t.dueDate).toLocaleString()}</time>
                             </div>
                           )}
