@@ -261,7 +261,7 @@ export function KanbanBoard({
                             </div>
                           )}
                           {(t.deadline ?? t.dueDate) && (
-                            <div className={`mt-2 text-xs ${overdue ? "text-rose-200" : "text-muted"}`}>
+                            <div className={`mt-2 text-xs ${overdue ? "text-rose-200" : "text-text"}`}>
                               📅 Due <time dateTime={t.deadline ?? t.dueDate}>{formatDueDate(t.deadline ?? t.dueDate) ?? new Date(t.deadline ?? t.dueDate).toLocaleString()}</time>
                             </div>
                           )}
