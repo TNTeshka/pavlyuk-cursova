@@ -17,9 +17,11 @@ export const createGroup = asyncHandler(async (req: AuthedRequest, res: Response
     tasksCount: 0,
     membersCount: group._count?.members ?? (group.members?.length ?? 0),
     ownerName: group.owner?.name ?? group.owner?.email ?? "-",
-    // Clean up Prisma specific fields
+    ownerId: group.ownerId,
+    owner: group.owner
+      ? { id: group.owner.id, name: group.owner.name, email: group.owner.email }
+      : undefined,
     _count: undefined,
-    owner: undefined,
   };
   // Emit group creation event
   io?.emit("group:created", { group: transformed });
@@ -34,9 +36,11 @@ export const listGroups = asyncHandler(async (req: AuthedRequest, res: Response)
     tasksCount: g._count?.tasks ?? 0,
     membersCount: g._count?.members ?? 0,
     ownerName: g.owner?.name ?? g.owner?.email ?? "-",
-    // Remove Prisma specific fields to keep payload clean
+    ownerId: g.ownerId,
+    owner: g.owner
+      ? { id: g.owner.id, name: g.owner.name, email: g.owner.email }
+      : undefined,
     _count: undefined,
-    owner: undefined,
   }));
   return res.json(transformed);
 });
@@ -122,9 +126,35 @@ export const addUser = asyncHandler(async (req: AuthedRequest, res: Response) =>
 export const removeUser = asyncHandler(async (req: AuthedRequest, res: Response) => {
   const groupId = req.params.id as string;
   const userId = req.params.userId as string;
-  const group = await groupsService.removeUserFromGroup(groupId, userId);
-  // Emit user removed from group
+  const group = await groupsService.removeUserFromGroup(groupId, userId, req.user!.id);
   io?.emit("group:user-removed", { groupId, userId });
   return res.json({ group });
+});
+
+export const updateGroup = asyncHandler(async (req: AuthedRequest, res: Response) => {
+  const groupId = req.params.id as string;
+  const { name, description, password } = req.body as {
+    name?: string;
+    description?: string | null;
+    password?: string | null;
+  };
+  const group = await groupsService.updateGroup(groupId, req.user!.id, {
+    name,
+    description,
+    password,
+  });
+  const transformed = {
+    ...group,
+    tasksCount: group._count?.tasks ?? 0,
+    membersCount: group._count?.members ?? (group.members?.length ?? 0),
+    ownerName: group.owner?.name ?? group.owner?.email ?? "-",
+    ownerId: group.ownerId,
+    owner: group.owner
+      ? { id: group.owner.id, name: group.owner.name, email: group.owner.email }
+      : undefined,
+    _count: undefined,
+  };
+  io?.emit("group:updated", { group: transformed });
+  return res.json({ group: transformed });
 });
 

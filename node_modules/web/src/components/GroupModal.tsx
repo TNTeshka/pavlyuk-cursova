@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
-
+import { api } from "../api";
 import { useGroups } from "../hooks/useGroups";
+import { useGroupStore } from "../store/groupStore";
 import { Button } from "./Button";
 
 type Props = {
@@ -13,52 +14,100 @@ export function GroupModal({ isOpen, onClose }: Props) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    await createGroup({ name, description: description || undefined, password });
-    setName("");
-    setDescription("");
-    setPassword("");
-    onClose();
+    setSaving(true);
+    setError(null);
+    try {
+      await createGroup({ name, description: description || undefined, password });
+      const refreshed = await api<{ id: string; name: string; description?: string | null }[]>("/api/groups");
+      useGroupStore.getState().setAll(refreshed);
+      setName("");
+      setDescription("");
+      setPassword("");
+      onClose();
+    } catch (err: any) {
+      setError(err?.message ?? "Не вдалося створити групу");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h2 className="modal__title">Create group</h2>
-        <p className="modal__subtitle">Organize work by team, project, or focus area.</p>
-        <form onSubmit={handleSubmit}>
-          <div className="mt-4 grid gap-3">
+        <div className="modal__header">
+          <div className="modal__title">
+            <h2>Створити групу</h2>
+            <p className="modal__subtitle">Організуйте роботу команди, проєкту або напрямку.</p>
+          </div>
+          <Button variant="ghost" size="sm" type="button" onClick={onClose}>
+            Закрити
+          </Button>
+        </div>
+
+        <form className="modal__body" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="group-name">
+              Назва групи
+            </label>
             <input
-              placeholder="Group name"
+              id="group-name"
+              placeholder="Наприклад: Маркетинг Q2"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              disabled={saving}
               className="form-input"
             />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="group-password">
+              Пароль
+            </label>
             <input
-              placeholder="Password"
+              id="group-password"
+              placeholder="Пароль для входу в групу"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={saving}
               className="form-input"
             />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="group-description">
+              Опис
+            </label>
             <textarea
-              placeholder="Description (optional)"
+              id="group-description"
+              placeholder="Необов'язковий опис групи"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
+              disabled={saving}
               className="form-input"
             />
-            <div className="mt-1 flex justify-end gap-2">
-              <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
-              <Button type="submit">Create group</Button>
-            </div>
+          </div>
+
+          {error && <div className="alert alert--error">{error}</div>}
+
+          <div className="modal__footer">
+            <Button type="button" variant="secondary" size="sm" onClick={onClose} disabled={saving}>
+              Скасувати
+            </Button>
+            <Button type="submit" variant="primary" size="sm" disabled={saving || !name.trim()}>
+              {saving ? "Створення…" : "Створити групу"}
+            </Button>
           </div>
         </form>
       </div>

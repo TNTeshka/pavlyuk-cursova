@@ -4,12 +4,14 @@ import { api } from "../api";
 import { useGroupStore } from "../store/groupStore";
 import { Button } from "../components/Button";
 import { GroupModal } from "../components/GroupModal";
+import { JoinGroupModal } from "../components/JoinGroupModal";
 
 import styles from "./GroupTasks.module.css";
+
 export function Groups() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const groups = Object.values(useGroupStore(state => state.groups));
+  const groups = Object.values(useGroupStore((state) => state.groups));
 
   useEffect(() => {
     const load = async () => {
@@ -26,46 +28,60 @@ export function Groups() {
     };
     load();
   }, []);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isJoinOpen, setIsJoinOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
-    <div className="grid gap-5">
-      <div className={styles.groupSection}>
-        <div className="flex flex-col items-center justify-center h-full text-center">
-          <div>
-            <h1 className="text-9xl font-bold text-[var(--color-text)] mb-4">Групи</h1>
-            <p className="text-7xl text-[var(--color-muted)] mb-8">Спільні простори для цілеспрямованої співпраці.</p>
+    <div className="groups-page">
+      <div className={`${styles.groupSection} ${styles.groupSectionCenter}`}>
+        <div className={styles.groupSection__wrapper}>
+          <h1 className={styles.groupSection__title}>Групи</h1>
+          <p className={styles.groupSection__subtitle}>
+            Спільні простори для цілеспрямованої співпраці вашої команди.
+          </p>
+          <div className="groups-hero__actions">
+            <Button variant="primary" size="sm" onClick={() => setIsCreateOpen(true)}>
+              Створити групу
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setIsJoinOpen(true)}>
+              Увійти в групу
+            </Button>
           </div>
-          <Button variant="primary" size="md" onClick={() => setIsModalOpen(true)} className="text-7xl py-8 px-20">Створити групу</Button>
         </div>
       </div>
 
-      {loading && <div className="text-sm text-[var(--color-muted)]">Завантаження…</div>}
-      {error && <div className="rounded-xl border border-rose-500/25 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</div>}
+      <div className="groups-page__content">
+        {loading && <div className="groups-page__status">Завантаження…</div>}
+        {error && <div className="alert alert--error">{error}</div>}
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {groups.map((g) => (
-          <Button
-            key={g.id}
-            type="button"
-            variant="ghost"
-            onClick={() => navigate(`/groups/${g.id}/tasks`)}
-            className="card"
-          >
-            <div className="text-base font-semibold tracking-tight text-[var(--color-text)]">{g.name}</div>
-            <div className="mt-2 text-sm text-[var(--color-muted)]">{g.description || "Опис ще не додано."}</div>
-          </Button>
-        ))}
+        {!loading && groups.length > 0 && (
+          <div className="groups-grid">
+            {groups.map((g) => (
+              <button
+                key={g.id}
+                type="button"
+                className="group-card"
+                onClick={() => navigate(`/groups/${g.id}/tasks`)}
+              >
+                <span className="group-card__title">{g.name}</span>
+                <span className="group-card__desc">{g.description || "Опис ще не додано."}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {!loading && groups.length === 0 && !error && (
+          <div className="groups-empty">
+            <p className="groups-empty__title">Ще немає груп</p>
+            <p className="groups-empty__text">Створіть першу групу або приєднайтесь до існуючої.</p>
+          </div>
+        )}
       </div>
 
-      {!loading && groups.length === 0 && (
-        <div className="card">
-          <div className="card">Ще немає груп. Створіть одну, щоб організувати роботу вашої команди.</div>
-        </div>
-      )}
-
-      <GroupModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <GroupModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
+      <JoinGroupModal isOpen={isJoinOpen} onClose={() => setIsJoinOpen(false)} />
     </div>
   );
 }

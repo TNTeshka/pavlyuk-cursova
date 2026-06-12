@@ -28,12 +28,11 @@ export function Admin() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // GET /api/users – auth middleware will protect the endpoint
         const data = await api<UserRow[]>("/api/users");
         setUsers(data);
         setError(null);
       } catch (e: any) {
-        setError(e?.message ?? "Failed to load users");
+        setError(e?.message ?? "Не вдалося завантажити користувачів");
       } finally {
         setLoading(false);
       }
@@ -42,7 +41,7 @@ export function Admin() {
       try {
         const data = await api<GroupRow[]>("/api/groups");
         setGroups(data);
-      } catch (e: any) {
+      } catch {
         // ignore groups errors for now
       } finally {
         setLoadingGroups(false);
@@ -53,22 +52,22 @@ export function Admin() {
   }, []);
 
   if (loading) {
-    return <div className="text-sm text-[var(--color-muted)]">Loading users…</div>;
+    return <div className="text-sm text-[var(--color-muted)]">Завантаження користувачів…</div>;
   }
   if (error) {
-    return <div className="text-rose-500 text-sm">{error}</div>;
+    return <div className="alert alert--error">{error}</div>;
   }
 
   return (
     <div className="admin-page">
-      <h1 className="text-2xl font-semibold mb-4 text-[var(--color-text)]">Admin – Users</h1>
+      <h1 className="text-2xl font-semibold mb-4 text-[var(--color-text)]">Адмін — Користувачі</h1>
       <table className="w-full border-collapse">
         <thead>
           <tr className="border-b">
             <th className="text-left p-2 text-[var(--color-text)]">ID</th>
-            <th className="text-left p-2 text-[var(--color-text)]">Email</th>
-            <th className="text-left p-2 text-[var(--color-text)]">Name</th>
-            <th className="text-left p-2 text-[var(--color-text)]">Tasks</th>
+            <th className="text-left p-2 text-[var(--color-text)]">Електронна пошта</th>
+            <th className="text-left p-2 text-[var(--color-text)]">Ім'я</th>
+            <th className="text-left p-2 text-[var(--color-text)]">Задачі</th>
           </tr>
         </thead>
         <tbody>
@@ -76,45 +75,46 @@ export function Admin() {
             <tr key={u.id} className="border-b">
               <td className="p-2 text-sm text-[var(--color-text)] break-all">{u.id}</td>
               <td className="p-2 text-sm text-[var(--color-text)]">{u.email}</td>
-              <td className="p-2 text-sm text-[var(--color-text)]">{u.name ?? "-"}</td>
-              <td className="p-2 text-sm text-[var(--color-text)]">{u.tasksCount ?? "-"}</td>
+              <td className="p-2 text-sm text-[var(--color-text)]">{u.name ?? "—"}</td>
+              <td className="p-2 text-sm text-[var(--color-text)]">{u.tasksCount ?? "—"}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2 className="text-xl font-semibold mb-3 text-[var(--color-text)]">Groups</h2>
+      <h2 className="text-xl font-semibold mb-3 text-[var(--color-text)]">Групи</h2>
       {loadingGroups ? (
-        <div className="text-sm text-[var(--color-muted)]">Loading groups…</div>
+        <div className="text-sm text-[var(--color-muted)]">Завантаження груп…</div>
       ) : (
         <table className="w-full border-collapse mb-6">
           <thead>
             <tr className="border-b">
               <th className="text-left p-2 text-[var(--color-text)]">ID</th>
-              <th className="text-left p-2 text-[var(--color-text)]">Name</th>
-              <th className="text-left p-2 text-[var(--color-text)]">Owner</th>
-                <th className="text-left p-2 text-[var(--color-text)]">Members</th>
-                <th className="text-left p-2 text-[var(--color-text)]">Description</th>
-              <th className="text-left p-2 text-[var(--color-text)]">Tasks</th>
+              <th className="text-left p-2 text-[var(--color-text)]">Назва</th>
+              <th className="text-left p-2 text-[var(--color-text)]">Власник</th>
+              <th className="text-left p-2 text-[var(--color-text)]">Учасники</th>
+              <th className="text-left p-2 text-[var(--color-text)]">Опис</th>
+              <th className="text-left p-2 text-[var(--color-text)]">Задачі</th>
             </tr>
           </thead>
           <tbody>
             {groups.map((g) => (
               <tr key={g.id} className="border-b">
-                <td className="p-2 text-sm text-[var(--color-text)] break-all text-[var(--color-text)]">{g.id}</td>
-                <td className="p-2 text-sm text-[var(--color-text)] text-[var(--color-text)]">{g.name}</td>
-                <td className="p-2 text-sm text-[var(--color-text)]">{g.ownerName ?? "-"}</td>
-                <td className="p-2 text-sm text-[var(--color-text)]">{g.membersCount ?? "-"}</td>
-                <td className="p-2 text-sm text-[var(--color-text)] text-[var(--color-muted)]">{g.description ?? "-"}</td>
-                <td className="p-2 text-sm text-[var(--color-text)]">{g.tasksCount ?? "-"}</td>
+                <td className="p-2 text-sm text-[var(--color-text)] break-all">{g.id}</td>
+                <td className="p-2 text-sm text-[var(--color-text)]">{g.name}</td>
+                <td className="p-2 text-sm text-[var(--color-text)]">{g.ownerName ?? "—"}</td>
+                <td className="p-2 text-sm text-[var(--color-text)]">{g.membersCount ?? "—"}</td>
+                <td className="p-2 text-sm text-[var(--color-muted)]">{g.description ?? "—"}</td>
+                <td className="p-2 text-sm text-[var(--color-text)]">{g.tasksCount ?? "—"}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-      {/* Placeholder for future admin actions */}
       <div className="mt-4">
-        <Button variant="primary" size="sm" onClick={() => alert("Admin actions not implemented yet.")}>Add Action</Button>
+        <Button variant="primary" size="sm" onClick={() => alert("Адмін-дії ще не реалізовані.")}>
+          Додати дію
+        </Button>
       </div>
     </div>
   );

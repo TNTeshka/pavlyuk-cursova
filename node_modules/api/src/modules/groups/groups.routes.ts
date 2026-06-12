@@ -2,7 +2,7 @@ import { Router } from "express";
 import { auth } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import { z } from "zod";
-import { createGroup, listGroups, getGroupTasks, createGroupTask, addUser, removeUser, getGroupMembers, updateGroupTask, deleteGroupTask } from "./groups.controller.js";
+import { createGroup, listGroups, getGroupTasks, createGroupTask, addUser, removeUser, getGroupMembers, updateGroupTask, deleteGroupTask, updateGroup } from "./groups.controller.js";
 import { createTaskBody } from "../tasks/tasks.routes.js";
 
 export const groupsRoutes = Router();
@@ -20,11 +20,19 @@ const addUserBody = z.object({
   password: z.string().optional()
 });
 
+const updateGroupBody = z.object({
+  name: z.string().min(1).optional(),
+  description: z.string().optional().nullable(),
+  password: z.string().optional().nullable(),
+});
+
 // All group routes are protected
 
 groupsRoutes.post("/", auth, validate({ body: createGroupBody }), createGroup);
 
 groupsRoutes.get("/", auth, listGroups);
+
+groupsRoutes.patch("/:id", auth, validate({ body: updateGroupBody }), updateGroup);
 
 groupsRoutes.get("/:id/tasks", auth, getGroupTasks);
 

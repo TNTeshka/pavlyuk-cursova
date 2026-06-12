@@ -18,8 +18,8 @@ export function TaskDetails({ task, onClose }: TaskDetailsProps) {
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <h2>{task.title}</h2>
         {task.description && <p>{task.description}</p>}
-        {task.dueDate && <p>Due: {new Date(task.dueDate).toLocaleDateString()}</p>}
-        <Button onClick={() => setShow(false)}>Close</Button>
+        {task.dueDate && <p>Дедлайн: {new Date(task.dueDate).toLocaleDateString()}</p>}
+        <Button onClick={() => setShow(false)}>Закрити</Button>
       </div>
     </div>
   );

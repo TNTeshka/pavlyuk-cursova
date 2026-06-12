@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { Task, TaskPriority, TaskStatus } from "../hooks/useTasks";
 
 import { Button } from "../components/Button";
+import { PRIORITY_LABELS, STATUS_LABELS } from "../utils/labels";
 
 interface KanbanBoardProps {
   tasks: Task[];
@@ -50,7 +51,7 @@ export function KanbanBoard({
     if (!value) return null;
     const d = new Date(value);
     if (isNaN(d.getTime())) return null;
-    return new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat("uk-UA", {
       year: "numeric",
       month: "short",
       day: "2-digit",
@@ -149,35 +150,42 @@ export function KanbanBoard({
   return (
     <div className="mt-6">
       {error && <div className="mb-3 rounded-xl border border-rose-500/25 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">{error}</div>}
-      {loading && <div className="text-[var(--color-muted)] mt-3 text-sm">Loading…</div>}
+      {loading && <div className="text-[var(--color-muted)] mt-3 text-sm">Завантаження…</div>}
 
-      {/* Full‑width background bar for tasks filter */}
       <div className="search-filter-bar">
-        <div>
-          <div className="tasks-header__content">
-            <h2 className="">Here you can filter or</h2>
+        <div className="search-filter-bar__top">
+          <div className="search-filter-bar__intro">
+            <h2 className="search-filter-bar__title">Тут можна фільтрувати задачі</h2>
+            <p className="search-filter-bar__subtitle">
+              Знайдіть потрібну задачу або створіть нову для своєї дошки.
+            </p>
           </div>
-          <div className="tasks-header__actions">
-            <Button onClick={onNewTask}>create a task</Button>
+          <div className="search-filter-bar__actions">
+            <Button variant="primary" size="sm" onClick={onNewTask}>
+              Створити задачу
+            </Button>
           </div>
         </div>
-        <input
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search tasks…"
-        />
-        <select
-          className="filter-select"
-          value={quickFilter}
-          onChange={(e) => setQuickFilter(e.target.value)}
-        >
-          <option value="">All</option>
-          <option value="high">High priority</option>
-          <option value="overdue">Overdue</option>
-          <option value="nodate">Без дати</option>
-          <option value="today">Due today</option>
-        </select>
+
+        <div className="search-filter-bar__controls">
+          <input
+            className="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Пошук задач…"
+          />
+          <select
+            className="filter-select"
+            value={quickFilter}
+            onChange={(e) => setQuickFilter(e.target.value)}
+          >
+            <option value="">Усі</option>
+            <option value="high">Високий пріоритет</option>
+            <option value="overdue">Прострочені</option>
+            <option value="nodate">Без дати</option>
+            <option value="today">Дедлайн сьогодні</option>
+          </select>
+        </div>
       </div>
 
       {grouped && (
@@ -185,15 +193,15 @@ export function KanbanBoard({
           {STATUSES.map((status) => (
             <div key={status} className="card">
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold uppercase">{status.replace("_", " ")}</h3>
+                <h3 className="text-sm font-semibold uppercase">{STATUS_LABELS[status]}</h3>
                 <span className={`column-badge ${columnBadgeClass(status)}`}>{grouped[status].length}</span>
               </div>
 
               <div className="mt-3 flex gap-2">
                 <input
-                  className="form-input bg-[var(--color-surface-7)]"
+                  className="form-input bg-color-surface-4"
                   value={drafts[status]}
-                  placeholder="Quick add…"
+                  placeholder="Швидке додавання…"
                   onChange={(e) => setDrafts((d) => ({ ...d, [status]: e.target.value }))}
                   onKeyDown={(e) => {
                     if (e.key !== "Enter") return;
@@ -213,7 +221,7 @@ export function KanbanBoard({
                 />
                 <Button
                   size="sm"
-                  variant="secondary" className="bg-[var(--color-surface-7)]"
+                  variant="secondary" className="bg-color-surface-4"
                   onClick={() => {
                     const title = drafts[status].trim();
                     if (!title || busyStatus[status]) return;
@@ -229,17 +237,9 @@ export function KanbanBoard({
                   }}
                   disabled={loading || busyStatus[status] || drafts[status].trim().length === 0}
                 >
-                  Add
+                  Додати
                 </Button>
-                <Button
-                  size="sm"
-                  variant="secondary" className="bg-[var(--color-surface-7)]"
-                  onClick={() => {
-                    console.log('Extra button clicked');
-                  }}
-                >
-                  Extra
-                </Button>
+
               </div>
 
               <div className="mt-4 grid gap-3">
@@ -260,8 +260,8 @@ export function KanbanBoard({
                             {t.title}
                           </div>
                           <div className="flex gap-2 items-center mt-1">
-                            <span className={`pill ${statusPillClass(t.status)} status-pill-${t.status.toLowerCase()}`}>{t.status.replace("_", " ")}</span>
-                            <span className={`pill ${priorityBadgeClass(t.priority)}`}>{t.priority}</span>
+                            <span className={`pill ${statusPillClass(t.status)} status-pill-${t.status.toLowerCase()}`}>{STATUS_LABELS[t.status]}</span>
+                            <span className={`pill ${priorityBadgeClass(t.priority)}`}>{PRIORITY_LABELS[t.priority]}</span>
                           </div>
                           {t.description && (
                             <div className="mt-1 line-clamp-2 text-sm text-muted">
@@ -270,7 +270,7 @@ export function KanbanBoard({
                           )}
                           {(t.deadline ?? t.dueDate) && (
                             <div className={`mt-2 text-xs ${overdue ? "text-rose-200" : "text-muted"}`}>
-                              📅 Due <time dateTime={t.deadline ?? t.dueDate}>{formatDueDate(t.deadline ?? t.dueDate) ?? new Date(t.deadline ?? t.dueDate).toLocaleString()}</time>
+                              📅 Дедлайн: <time dateTime={t.deadline ?? t.dueDate}>{formatDueDate(t.deadline ?? t.dueDate) ?? new Date(t.deadline ?? t.dueDate).toLocaleString()}</time>
                             </div>
                           )}
                         </Button>
@@ -284,9 +284,9 @@ export function KanbanBoard({
                               onChange={(e) => applyUpdate(t.id, { status: e.target.value as TaskStatus })}
                               id={`status-${t.id}`}
                             >
-                              <option value="TODO">TODO</option>
-                              <option value="IN_PROGRESS">IN_PROGRESS</option>
-                              <option value="DONE">DONE</option>
+                              <option value="TODO">{STATUS_LABELS.TODO}</option>
+                              <option value="IN_PROGRESS">{STATUS_LABELS.IN_PROGRESS}</option>
+                              <option value="DONE">{STATUS_LABELS.DONE}</option>
                             </select>
                             <label className="text-muted text-xs mr-1" htmlFor={`priority-${t.id}`}>Пріоритет:</label>
                             <select
@@ -295,12 +295,12 @@ export function KanbanBoard({
                               onChange={(e) => applyUpdate(t.id, { priority: e.target.value as TaskPriority })}
                               id={`priority-${t.id}`}
                             >
-                              <option value="LOW">LOW</option>
-                              <option value="MEDIUM">MEDIUM</option>
-                              <option value="HIGH">HIGH</option>
+                              <option value="LOW">{PRIORITY_LABELS.LOW}</option>
+                              <option value="MEDIUM">{PRIORITY_LABELS.MEDIUM}</option>
+                              <option value="HIGH">{PRIORITY_LABELS.HIGH}</option>
                             </select>
                             <div className="task-actions flex justify-end gap-2 mt-2">
-                              <button className="icon-button" aria-label="Delete" onClick={() => run(() => onDelete(t.id))}>
+                              <button className="icon-button" aria-label="Видалити" onClick={() => run(() => onDelete(t.id))}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>

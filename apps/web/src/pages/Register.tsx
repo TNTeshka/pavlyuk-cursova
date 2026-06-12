@@ -15,12 +15,13 @@ export function Register() {
   const { toggleTheme } = useContext(ThemeContext);
 
   return (
-    <div className="auth-page fade-enter">
+    <div className="auth-page">
       <div className="auth-card">
         <h2 className="auth-title">Створити акаунт</h2>
         <p className="auth-subtitle">Налаштуйте робоче середовище за менше хвилини.</p>
+
         <form
-          className="mt-6"
+          className="auth-form"
           onSubmit={async (e) => {
             e.preventDefault();
             setError(null);
@@ -28,7 +29,7 @@ export function Register() {
             if (ok) nav("/tasks");
           }}
         >
-          <div className="grid gap-4">
+          <div className="form-grid">
             <input
               placeholder="Ім'я (необов'язково)"
               value={name}
@@ -58,21 +59,24 @@ export function Register() {
               disabled={loading}
               className="form-input"
             />
-            {error && (
-              <div className="alert alert--error">
-                {error}
-              </div>
-            )}
-            <Button type="submit" disabled={loading}>
+            {error && <div className="alert alert--error">{error}</div>}
+            <Button type="submit" variant="primary" size="sm" disabled={loading}>
               {loading ? "Створення…" : "Створити акаунт"}
             </Button>
-            <Button variant="secondary" size="sm" onClick={toggleTheme}>Змінити тему</Button>
           </div>
         </form>
-        <p className="auth-subtitle">Вже маєте акаунт?{' '} <Link className="font-medium text-violet-300 hover:text-violet-200" to="/login">
-            Увійти
-          </Link>
-        </p>
+
+        <div className="auth-footer">
+          <Button type="button" variant="ghost" size="sm" onClick={toggleTheme}>
+            Змінити тему
+          </Button>
+          <p className="auth-subtitle auth-footer__text">
+            Вже маєте акаунт?{" "}
+            <Link className="auth-link" to="/login">
+              Увійти
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

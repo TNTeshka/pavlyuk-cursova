@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { api } from "../api";
 import { useTaskStore, Task } from "../store/taskStore";
 import { Button } from "../components/Button";
+import { PRIORITY_LABELS, STATUS_LABELS } from "../utils/labels";
 
 export function Dashboard() {
-  const tasks = Object.values(useTaskStore(state => state.tasks));
-  const setAll = useTaskStore(state => state.setAll);
+  const tasks = Object.values(useTaskStore((state) => state.tasks));
+  const setAll = useTaskStore((state) => state.setAll);
   const [showPriority, setShowPriority] = useState(false);
 
-  // Load tasks once if store is empty
   useEffect(() => {
     if (tasks.length === 0) {
       (async () => {
@@ -22,13 +22,11 @@ export function Dashboard() {
     }
   }, [tasks.length, setAll]);
 
-  // --- Status counts ---
   const byStatus: Record<"TODO" | "IN_PROGRESS" | "DONE", number> = {
     TODO: 0,
     IN_PROGRESS: 0,
     DONE: 0,
   };
-  // --- Priority counts ---
   const byPriority: Record<"LOW" | "MEDIUM" | "HIGH", number> = {
     LOW: 0,
     MEDIUM: 0,
@@ -36,10 +34,7 @@ export function Dashboard() {
   };
 
   tasks.forEach((t) => {
-    // status aggregation
     byStatus[t.status] = (byStatus[t.status] ?? 0) + 1;
-    // priority aggregation
-    // @ts-ignore – task type does not currently include priority in the definition; adjust if needed
     if ((t as any).priority) {
       const p = (t as any).priority as "LOW" | "MEDIUM" | "HIGH";
       byPriority[p] = (byPriority[p] ?? 0) + 1;
@@ -57,81 +52,59 @@ export function Dashboard() {
   const mediumRate = totalPriority ? Math.round((byPriority.MEDIUM / totalPriority) * 100) : 0;
   const lowRate = totalPriority ? Math.round((byPriority.LOW / totalPriority) * 100) : 0;
 
+  const renderBar = (
+    label: string,
+    count: number,
+    rate: number,
+    fillClass: string
+  ) => (
+    <div className="stats-bar" key={label}>
+      <div className="stats-bar__label">
+        <span>{label}</span>
+        <span>{count}</span>
+      </div>
+      <div className="stats-bar__track">
+        <div className={`stats-bar__fill ${fillClass}`} style={{ width: `${rate}%` }} />
+      </div>
+    </div>
+  );
+
   return (
     <div className="dashboard-page">
-      <section className="card">
-        <div className="card-header">
-  <h1 className="card-title">Dashboard</h1>
-  <Button variant="primary" size="sm" onClick={() => setShowPriority(!showPriority)}>
-    {showPriority ? "Show Status" : "Show Priority"}
-  </Button>
-</div>
-<div className="stat-item">
-  <div className="stat-label">Completion</div>
-  <div className="stat-value">{completionRate}%</div>
-</div>
-        {showPriority ? (
-          // Priority view
-          <>
-            <div className="progress-section">
-              <div className="progress-row">
-                <span className="progress-label">High</span>
-                <span>{byPriority.HIGH}</span>
-              </div>
-              <div className="progress-bar-container">
-                <div className="progress-bar high" style={{ width: `${highRate}%` }} />
-              </div>
+      <section className="dashboard-card">
+        <div className="dashboard-card__header">
+          <div className="dashboard-card__title-block">
+            <h2 className="dashboard-card__title">Панель</h2>
+            <p className="dashboard-card__subtitle">
+              {showPriority ? "Розподіл задач за пріоритетом" : "Прогрес задач за статусом"}
+            </p>
+          </div>
+          <Button variant="secondary" size="sm" onClick={() => setShowPriority(!showPriority)}>
+            {showPriority ? "Показати статуси" : "Показати пріоритети"}
+          </Button>
+        </div>
 
-              <div className="progress-row">
-                <span className="progress-label">Medium</span>
-                <span>{byPriority.MEDIUM}</span>
-              </div>
-              <div className="progress-bar-container">
-                <div className="progress-bar medium" style={{ width: `${mediumRate}%` }} />
-              </div>
+        <div className="dashboard-highlight">
+          <span className="dashboard-highlight__label">Завершено</span>
+          <span className="dashboard-highlight__value">{completionRate}%</span>
+        </div>
 
-              <div className="progress-row">
-                <span className="progress-label">Low</span>
-                <span>{byPriority.LOW}</span>
-              </div>
-              <div className="progress-bar-container">
-                <div className="progress-bar low" style={{ width: `${lowRate}%` }} />
-              </div>
-            </div>
-          </>
-        ) : (
-          // Status view (existing)
-          <>
-            {/* You can add loading/error handling as needed */}
-            <div className="progress-section">
-              <div className="progress-row">
-                <span className="progress-label">Done</span>
-                <span>{byStatus.DONE}</span>
-              </div>
-              <div className="progress-bar-container">
-                <div className="progress-bar done" style={{ width: `${completionRate}%` }} />
-              </div>
-
-              <div className="progress-row">
-                <span className="progress-label">In Progress</span>
-                <span>{byStatus.IN_PROGRESS}</span>
-              </div>
-              <div className="progress-bar-container">
-                <div className="progress-bar in-progress" style={{ width: `${inProgressRate}%` }} />
-              </div>
-
-              <div className="progress-row">
-                <span className="progress-label">To Do</span>
-                <span>{byStatus.TODO}</span>
-              </div>
-              <div className="progress-bar-container">
-                <div className="progress-bar todo" style={{ width: `${todoRate}%` }} />
-              </div>
-            </div>
-          </>
-        )}
+        <div className="stats-widget__bars">
+          {showPriority ? (
+            <>
+              {renderBar(PRIORITY_LABELS.HIGH, byPriority.HIGH, highRate, "stats-bar__fill--high")}
+              {renderBar(PRIORITY_LABELS.MEDIUM, byPriority.MEDIUM, mediumRate, "stats-bar__fill--medium")}
+              {renderBar(PRIORITY_LABELS.LOW, byPriority.LOW, lowRate, "stats-bar__fill--low")}
+            </>
+          ) : (
+            <>
+              {renderBar(STATUS_LABELS.DONE, byStatus.DONE, completionRate, "stats-bar__fill--done")}
+              {renderBar(STATUS_LABELS.IN_PROGRESS, byStatus.IN_PROGRESS, inProgressRate, "stats-bar__fill--in_progress")}
+              {renderBar(STATUS_LABELS.TODO, byStatus.TODO, todoRate, "stats-bar__fill--todo")}
+            </>
+          )}
+        </div>
       </section>
     </div>
   );
 }
-

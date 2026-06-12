@@ -7,8 +7,21 @@ type Group = {
   description?: string | null;
   createdAt: string;
   updatedAt: string;
-  // members omitted for brevity
-  owner?: { id: string; name?: string | null }; // added owner
+  ownerId?: string;
+  owner?: { id: string; name?: string | null; email?: string };
+};
+
+type GroupMember = {
+  id: string;
+  name?: string | null;
+  email?: string;
+  username?: string | null;
+};
+
+type GroupMembersResponse = {
+  members: GroupMember[];
+  ownerId: string;
+  owner: GroupMember;
 };
 
 type Task = {
@@ -18,7 +31,6 @@ type Task = {
   status: string;
   priority: string;
   dueDate?: string | null;
-  // other fields omitted
 };
 
 export function useGroups() {
@@ -48,26 +60,43 @@ export function useGroups() {
     await fetchGroups();
   }, [fetchGroups]);
 
+  const updateGroup = useCallback(
+    async (groupId: string, input: { name?: string; description?: string | null; password?: string | null }) => {
+      await api(`/api/groups/${groupId}`, { method: "PATCH", body: JSON.stringify(input) });
+      await fetchGroups();
+    },
+    [fetchGroups]
+  );
+
   const addUser = useCallback(async (groupId: string, userId: string, password?: string) => {
     await api(`/api/groups/${groupId}/users`, { method: "POST", body: JSON.stringify({ userId, password }) });
     await fetchGroups();
-  }, []);
+  }, [fetchGroups]);
 
   const removeUser = useCallback(async (groupId: string, userId: string) => {
     await api(`/api/groups/${groupId}/users/${userId}`, { method: "DELETE" });
     await fetchGroups();
-  }, []);
+  }, [fetchGroups]);
 
   const getGroupTasks = useCallback(async (groupId: string) => {
     const data = await api<{ tasks: Task[] }>(`/api/groups/${groupId}/tasks`);
     return data.tasks;
   }, []);
 
-  // Fetch members of a group
   const getGroupMembers = useCallback(async (groupId: string) => {
-    const data = await api<{ members: any[] }>(`/api/groups/${groupId}/users`);
-    return data.members;
+    return api<GroupMembersResponse>(`/api/groups/${groupId}/users`);
   }, []);
 
-  return { groups, loading, error, fetchGroups, createGroup, addUser, removeUser, getGroupTasks, getGroupMembers };
+  return {
+    groups,
+    loading,
+    error,
+    fetchGroups,
+    createGroup,
+    updateGroup,
+    addUser,
+    removeUser,
+    getGroupTasks,
+    getGroupMembers,
+  };
 }

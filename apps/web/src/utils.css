@@ -29,7 +29,8 @@
 .mr-1 { margin-right: 0.25rem; }
 .mx-auto { margin-left: auto; margin-right: auto; }
 
-/* Width / Max‑width -------------------------------------------- */
+/* Height utilities */
+.h-screen { height: 100vh; }
 .max-w-5xl { max-width: 80rem; }
 .max-w-6xl { max-width: 96rem; }
 .w-full { width: 100%; }

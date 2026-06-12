@@ -1,10 +1,11 @@
 import { Task } from "../store/taskStore";
+import { STATUS_LABELS } from "../utils/labels";
 
 export function GroupDashboard({ tasks }: { tasks: Task[] }) {
   const byStatus: Record<"TODO" | "IN_PROGRESS" | "DONE", number> = {
     TODO: 0,
     IN_PROGRESS: 0,
-    DONE: 0
+    DONE: 0,
   };
   tasks.forEach((t) => {
     byStatus[t.status] = (byStatus[t.status] ?? 0) + 1;
@@ -17,38 +18,44 @@ export function GroupDashboard({ tasks }: { tasks: Task[] }) {
 
   return (
     <div className="dashboard-page">
-      <section className="card">
-        <div className="card-header">
-          <h1 className="card-title">Group Dashboard</h1>
-          <p className="card-subtitle">Task overview for this group.</p>
+      <section className="dashboard-card">
+        <div className="dashboard-card__header">
+          <div className="dashboard-card__title-block">
+            <h2 className="dashboard-card__title">Панель групи</h2>
+            <p className="dashboard-card__subtitle">Огляд задач у цій групі.</p>
+          </div>
         </div>
-        <div className="stat-item">
-          <div className="stat-label">Completion</div>
-          <div className="stat-value">{completionRate}%</div>
+        <div className="dashboard-highlight">
+          <span className="dashboard-highlight__label">Завершено</span>
+          <span className="dashboard-highlight__value">{completionRate}%</span>
         </div>
-        <div className="progress-section">
-          <div className="progress-row">
-            <span className="progress-label">Done</span>
-            <span>{byStatus.DONE}</span>
+        <div className="stats-widget__bars">
+          <div className="stats-bar">
+            <div className="stats-bar__label">
+              <span>{STATUS_LABELS.DONE}</span>
+              <span>{byStatus.DONE}</span>
+            </div>
+            <div className="stats-bar__track">
+              <div className="stats-bar__fill stats-bar__fill--done" style={{ width: `${completionRate}%` }} />
+            </div>
           </div>
-          <div className="progress-bar-container">
-            <div className="progress-bar done" style={{ width: `${completionRate}%` }} />
+          <div className="stats-bar">
+            <div className="stats-bar__label">
+              <span>{STATUS_LABELS.IN_PROGRESS}</span>
+              <span>{byStatus.IN_PROGRESS}</span>
+            </div>
+            <div className="stats-bar__track">
+              <div className="stats-bar__fill stats-bar__fill--in_progress" style={{ width: `${inProgressRate}%` }} />
+            </div>
           </div>
-
-          <div className="progress-row">
-            <span className="progress-label">In Progress</span>
-            <span>{byStatus.IN_PROGRESS}</span>
-          </div>
-          <div className="progress-bar-container">
-            <div className="progress-bar in-progress" style={{ width: `${inProgressRate}%` }} />
-          </div>
-
-          <div className="progress-row">
-            <span className="progress-label">To Do</span>
-            <span>{byStatus.TODO}</span>
-          </div>
-          <div className="progress-bar-container">
-            <div className="progress-bar todo" style={{ width: `${todoRate}%` }} />
+          <div className="stats-bar">
+            <div className="stats-bar__label">
+              <span>{STATUS_LABELS.TODO}</span>
+              <span>{byStatus.TODO}</span>
+            </div>
+            <div className="stats-bar__track">
+              <div className="stats-bar__fill stats-bar__fill--todo" style={{ width: `${todoRate}%` }} />
+            </div>
           </div>
         </div>
       </section>

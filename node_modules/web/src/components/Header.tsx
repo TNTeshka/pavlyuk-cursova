@@ -10,7 +10,6 @@ export function Header() {
   const navigate = useNavigate();
   const routerLocation = useLocation();
 
-
   let userName = "";
   let userEmail = "";
   try {
@@ -25,10 +24,10 @@ export function Header() {
   const isAdmin = userEmail === "admin@example.com";
 
   const navItems = [
-    { to: "/tasks", label: "Tasks" },
-    { to: "/tasks#dashboard", label: "Dashboard" },
-    { to: "/groups", label: "Groups" },
-    ...(isAdmin ? [{ to: "/admin", label: "Admin" }] : []),
+    { to: "/tasks", label: "Задачі" },
+    { to: "/tasks#dashboard", label: "Панель" },
+    { to: "/groups", label: "Групи" },
+    ...(isAdmin ? [{ to: "/admin", label: "Адмін" }] : []),
   ];
 
   return (
@@ -37,7 +36,6 @@ export function Header() {
         <div className="text-xl font-semibold">Task Manager</div>
       </div>
 
-      {/* Navigation moved from sidebar */}
       <nav className="header-nav">
         {navItems.map((item) =>
           false ? (
@@ -71,16 +69,16 @@ export function Header() {
       </nav>
 
       <div className="header-right">
-        <span className="user-name">{userName || "User"}</span>
+        <span className="user-name">{userName || "Користувач"}</span>
         <Button
-          variant="secondary"
+          variant="primary"
           size="sm"
           onClick={() => {
             logout();
             window.location.href = "/login";
           }}
         >
-          Logout
+          Вийти
         </Button>
         <Button
           variant="primary"
@@ -89,7 +87,7 @@ export function Header() {
             toggleTheme();
           }}
         >
-          Toggle Theme
+          Змінити тему
         </Button>
       </div>
     </header>

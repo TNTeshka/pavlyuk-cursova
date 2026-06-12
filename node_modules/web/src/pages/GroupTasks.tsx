@@ -6,6 +6,7 @@ import { api } from "../api";
 import { Button } from "../components/Button";
 import styles from "./GroupTasks.module.css";
 import { TaskModal } from "../components/TaskModal";
+import { GroupSettingsModal } from "../components/GroupSettingsModal";
 import { GroupMembersModal } from "../components/GroupMembersModal";
 import { KanbanBoard } from "../components/KanbanBoard";
 
@@ -27,36 +28,44 @@ function GroupStatsWidget({ tasks }: { tasks: Task[] }) {
   const todo = total ? Math.round((byStatus.TODO / total) * 100) : 0;
 
   return (
-    <div className="card">
-      <div className="card-header">
-        <h1 className="card-title">Панель групи</h1>
-        <p className="card-subtitle">Огляд статусу задач у цій групі.</p>
+    <div className="dashboard-card">
+      <div className="dashboard-card__header">
+        <div className="dashboard-card__title-block">
+          <h2 className="dashboard-card__title">Панель групи</h2>
+          <p className="dashboard-card__subtitle">Огляд статусу задач у цій групі.</p>
+        </div>
       </div>
-      <div className="stat-item">
-        <div className="stat-label">Завершено</div>
-        <div className="stat-value">{completion}%</div>
+      <div className="dashboard-highlight">
+        <span className="dashboard-highlight__label">Завершено</span>
+        <span className="dashboard-highlight__value">{completion}%</span>
       </div>
-      <div className="progress-section">
-        <div className="progress-row">
-          <span className="progress-label">Виконано</span>
-          <span>{byStatus.DONE}</span>
+      <div className="stats-widget__bars">
+        <div className="stats-bar">
+          <div className="stats-bar__label">
+            <span>Виконано</span>
+            <span>{byStatus.DONE}</span>
+          </div>
+          <div className="stats-bar__track">
+            <div className="stats-bar__fill stats-bar__fill--done" style={{ width: `${completion}%` }} />
+          </div>
         </div>
-        <div className="progress-bar-container">
-          <div className="progress-bar done" style={{ width: `${completion}%` }} />
+        <div className="stats-bar">
+          <div className="stats-bar__label">
+            <span>В процесі</span>
+            <span>{byStatus.IN_PROGRESS}</span>
+          </div>
+          <div className="stats-bar__track">
+            <div className="stats-bar__fill stats-bar__fill--in_progress" style={{ width: `${inProgress}%` }} />
+          </div>
         </div>
-        <div className="progress-row">
-          <span className="progress-label">В процесі</span>
-          <span>{byStatus.IN_PROGRESS}</span>
-        </div>
-        <div className="progress-bar-container">
-          <div className="progress-bar in-progress" style={{ width: `${inProgress}%` }} />
-        </div>
-        <div className="progress-row">
-          <span className="progress-label">До виконання</span>
-          <span>{byStatus.TODO}</span>
-        </div>
-        <div className="progress-bar-container">
-          <div className="progress-bar todo" style={{ width: `${todo}%` }} />
+        <div className="stats-bar">
+          <div className="stats-bar__label">
+            <span>До виконання</span>
+            <span>{byStatus.TODO}</span>
+          </div>
+          <div className="stats-bar__track">
+            <div className="stats-bar__fill stats-bar__fill--todo" style={{ width: `${todo}%` }} />
+          </div>
         </div>
       </div>
     </div>
@@ -83,8 +92,8 @@ export function GroupTasks() {
   const [error, setError] = useState<string | null>(null);
   const [isMembersOpen, setIsMembersOpen] = useState(false);
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [quickFilter, setQuickFilter] = useState(""); // "", "high", "overdue", "today"
 
   // ---------- Handlers ----------
   const handleCreateTask = async (input: { title: string; status: string; description?: string; notes?: string; deadline?: string }) => {
@@ -155,12 +164,24 @@ export function GroupTasks() {
       <div className="tasks-container">
         <div className="tasks-page">
           {/* Group picture with name and members button */}
-<div className={styles.groupSection}>
-  <div className={styles.groupSection__wrapper}>
-    <h1 className={styles.groupSection__title}>Group: {group?.name ?? 'Завантаження…'}</h1>
-    <Button variant="secondary" size="sm" onClick={() => setIsMembersOpen(true)}>Members</Button>
-  </div>
-</div>
+          <div className={styles.groupSection}>
+            <div className={styles.groupSection__wrapper}>
+              <h1 className={styles.groupSection__title}>{group?.name ?? "Завантаження…"}</h1>
+              {group?.description && (
+                <p className={styles.groupSection__subtitle}>{group.description}</p>
+              )}
+              <div className={styles.groupSection__actions}>
+                <Button variant="secondary" size="sm" onClick={() => setIsMembersOpen(true)}>
+                  Учасники
+                </Button>
+                {group?.ownerId && localStorage.getItem("userId") === group.ownerId && (
+                  <Button variant="secondary" size="sm" onClick={() => setIsSettingsOpen(true)}>
+                    Налаштування групи
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
           <KanbanBoard
             tasks={tasks}
             loading={loading}
@@ -203,7 +224,23 @@ export function GroupTasks() {
               onDelete={handleDeleteTask}
             />
           )}
-          <GroupMembersModal isOpen={isMembersOpen} onClose={() => setIsMembersOpen(false)} groupId={groupId!} />
+          <GroupMembersModal
+            isOpen={isMembersOpen}
+            onClose={() => setIsMembersOpen(false)}
+            groupId={groupId!}
+            onLeftGroup={() => navigate("/groups")}
+            onGroupUpdated={() => fetchGroups()}
+          />
+          <GroupSettingsModal
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+            groupId={groupId!}
+            groupName={group?.name ?? ""}
+            groupDescription={group?.description}
+            onUpdated={() => {
+              fetchGroups();
+            }}
+          />
         </div>
       </div>
     </>

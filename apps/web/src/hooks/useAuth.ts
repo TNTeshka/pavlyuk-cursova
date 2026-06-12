@@ -11,16 +11,15 @@ export function useAuth() {
 
   const login = useCallback(async (login: string, password: string) => {
     setError(null);
-    if (!login.trim()) return setError("Login is required");
-    // Accept any non‑empty string (email or username)
-    if (!password) return setError("Password is required");
+    if (!login.trim()) return setError("Введіть логін або email");
+    if (!password) return setError("Введіть пароль");
 
     setLoading(true);
     try {
       await auth.login(login.trim(), password);
       return true;
     } catch (e: any) {
-      setError(e?.message ?? "Login failed");
+      setError(e?.message ?? "Не вдалося увійти");
       return false;
     } finally {
       setLoading(false);
@@ -31,19 +30,19 @@ export function useAuth() {
     setError(null);
     const u = username?.trim() || undefined;
     const n = name?.trim() || undefined;
-    if (!email.trim()) return setError("Email is required");
-    if (!isEmailLike(email.trim())) return setError("Enter a valid email");
-    if (!password) return setError("Password is required");
-    if (password.length < 6) return setError("Password must be at least 6 characters");
-    if (u !== undefined && u.length === 0) return setError("Username cannot be empty");
-    if (n !== undefined && n.length === 0) return setError("Name cannot be empty");
+    if (!email.trim()) return setError("Введіть email");
+    if (!isEmailLike(email.trim())) return setError("Введіть коректний email");
+    if (!password) return setError("Введіть пароль");
+    if (password.length < 6) return setError("Пароль має містити щонайменше 6 символів");
+    if (u !== undefined && u.length === 0) return setError("Логін не може бути порожнім");
+    if (n !== undefined && n.length === 0) return setError("Ім'я не може бути порожнім");
 
     setLoading(true);
     try {
       await auth.register(email.trim(), password, u, n);
       return true;
     } catch (e: any) {
-      setError(e?.message ?? "Registration failed");
+      setError(e?.message ?? "Не вдалося зареєструватися");
       return false;
     } finally {
       setLoading(false);
@@ -56,4 +55,3 @@ export function useAuth() {
 
   return { loading, error, setError, login, register, logout };
 }
-
