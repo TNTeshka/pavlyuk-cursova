@@ -434,20 +434,11 @@ select.form-select option {
 .pill-done { background: #10b981; } /* green */
 
 /* Adjust pill padding */
-/* Custom styles for status and priority dropdowns */
-.status-select,
-.priority-select {
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
+/* Dropdown option background using surface-7 */
+.status-select option,
+.priority-select option {
   background: var(--color-surface-7);
-  padding: 0.5rem 0.75rem;
-  font-size: 0.75rem; /* text-xs */
   color: var(--color-text);
-}
-.status-select:focus,
-.priority-select:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--color-accent);
 }
 
 
@@ -709,6 +700,8 @@ select.form-select option {
 .project-completion-widget .progress-in-progress { background: #f97316; }
 .project-completion-widget .progress-todo { background: #3b82f6; }
 
-
+.bg-color-surface-4{
+    background: var(--color-surface-4) !important;
+}
 
 
