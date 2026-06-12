@@ -231,6 +231,15 @@ export function KanbanBoard({
                 >
                   Add
                 </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => {
+                    console.log('Extra button clicked');
+                  }}
+                >
+                  Extra
+                </Button>
               </div>
 
               <div className="mt-4 grid gap-3">
@@ -251,7 +260,7 @@ export function KanbanBoard({
                             {t.title}
                           </div>
                           <div className="flex gap-2 items-center mt-1">
-                            <span className={`pill ${statusPillClass(t.status)}`}>{t.status.replace("_", " ")}</span>
+                            <span className={`pill ${statusPillClass(t.status)} status-pill-${t.status.toLowerCase()}`}>{t.status.replace("_", " ")}</span>
                             <span className={`pill ${priorityBadgeClass(t.priority)}`}>{t.priority}</span>
                           </div>
                           {t.description && (
