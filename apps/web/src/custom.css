@@ -219,8 +219,9 @@ font-size: 18px;
 }
 
 
-
-
+.bg-surface-4 {
+  background: var(--color-surface-4) !important;
+}
 
 /* Layout */
 .app-header {
@@ -260,7 +261,7 @@ font-size: 18px;
 
 /* Text hierarchy */
 .app-header .header-left .text-sm {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--color-header-text);
   font-weight: 500;
 }
@@ -433,12 +434,20 @@ select.form-select option {
 .pill-done { background: #10b981; } /* green */
 
 /* Adjust pill padding */
-/* Adjust pill padding and add border */
-.pill {
-  padding: 2px 6px;
-  border-radius: 8px;
+/* Custom styles for status and priority dropdowns */
+.status-select,
+.priority-select {
+  border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
-  color: #e6f4fa;
+  background: var(--color-surface-2);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem; /* text-xs */
+  color: var(--color-text);
+}
+.status-select:focus,
+.priority-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-accent);
 }
 
 

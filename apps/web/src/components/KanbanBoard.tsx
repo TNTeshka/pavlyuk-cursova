@@ -271,7 +271,7 @@ export function KanbanBoard({
                           <div className="flex items-center gap-2">
                             <label className="text-muted text-xs mr-1" htmlFor={`status-${t.id}`}>Статус:</label>
                             <select
-                              className="rounded-lg border border-border bg-[var(--color-surface-2)] px-2 py-1 text-xs text-text focus:outline-none focus:ring-2 focus:ring-accent/30 hidden"
+                              className="status-select hidden"
                               value={t.status}
                               onChange={(e) => applyUpdate(t.id, { status: e.target.value as TaskStatus })}
                               id={`status-${t.id}`}
@@ -282,7 +282,7 @@ export function KanbanBoard({
                             </select>
                             <label className="text-muted text-xs mr-1" htmlFor={`priority-${t.id}`}>Пріоритет:</label>
                             <select
-                              className="rounded-lg border border-border bg-[var(--color-surface-2)] px-2 py-1 text-xs text-text focus:outline-none focus:ring-2 focus:ring-accent/30 hidden"
+                              className="priority-select hidden"
                               value={t.priority}
                               onChange={(e) => applyUpdate(t.id, { priority: e.target.value as TaskPriority })}
                               id={`priority-${t.id}`}
