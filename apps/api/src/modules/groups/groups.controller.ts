@@ -1,13 +1,13 @@
 import { io } from "../../socket";
 import type { AuthedRequest } from "../../middleware/auth.js";
-import type { Response } from "express";
+import type { Response, NextFunction } from "express";
 import * as groupsService from "../../services/groups.service.js";
 import { verifyPassword } from "../../utils/password.js";
 import { prisma } from "../../prisma.js";
 import { asyncHandler } from "../../middleware/asyncHandler.js";
 import { ApiError } from "../../middleware/error.js";
 
-export const createGroup = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const createGroup = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const { name, description, password } = req.body as {
     name: string;
     description?: string;
@@ -41,7 +41,7 @@ export const createGroup = asyncHandler(async (req: AuthedRequest, res: Response
   return res.status(201).json({ group: transformed });
 });
 
-export const listGroups = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const listGroups = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const groups = await groupsService.listGroups(req.user!.id);
 
   const transformed = groups.map((g: any) => ({
@@ -61,19 +61,19 @@ export const listGroups = asyncHandler(async (req: AuthedRequest, res: Response)
   return res.json(transformed);
 });
 
-export const getGroupTasks = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const getGroupTasks = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const groupId = req.params.id as string;
   const tasks = await groupsService.getGroupTasks(groupId, req.user!.id);
   return res.json({ tasks });
 });
 
-export const getGroupMembers = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const getGroupMembers = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const groupId = req.params.id as string;
   const data = await groupsService.getGroupMembers(groupId);
   return res.json(data);
 });
 
-export const createGroupTask = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const createGroupTask = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const groupId = req.params.id as string;
   const userId = req.user!.id;
 
@@ -97,7 +97,7 @@ export const createGroupTask = asyncHandler(async (req: AuthedRequest, res: Resp
   return res.status(201).json({ task });
 });
 
-export const updateGroupTask = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const updateGroupTask = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const groupId = req.params.id as string;
   const taskId = req.params.taskId as string;
   const userId = req.user!.id;
@@ -113,7 +113,7 @@ export const updateGroupTask = asyncHandler(async (req: AuthedRequest, res: Resp
     status: input.status,
     priority: input.priority,
     description: input.description,
-    dueDate: input.deadline ? new Date(input.deadline) : undefined,
+    deadline: input.deadline ? new Date(input.deadline) : undefined,
   });
 
   if (!task) throw new ApiError(404, "NOT_FOUND", "Task not found");
@@ -122,7 +122,7 @@ export const updateGroupTask = asyncHandler(async (req: AuthedRequest, res: Resp
   return res.json({ task });
 });
 
-export const deleteGroupTask = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const deleteGroupTask = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const groupId = req.params.id as string;
   const taskId = req.params.taskId as string;
   const userId = req.user!.id;
@@ -134,7 +134,7 @@ export const deleteGroupTask = asyncHandler(async (req: AuthedRequest, res: Resp
   return res.status(204).send();
 });
 
-export const addUser = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const addUser = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const groupId = req.params.id as string;
   const { userId, password } = req.body as { userId: string; password?: string };
 
@@ -155,7 +155,7 @@ export const addUser = asyncHandler(async (req: AuthedRequest, res: Response) =>
   return res.json({ group });
 });
 
-export const removeUser = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const removeUser = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const groupId = req.params.id as string;
   const userId = req.params.userId as string;
   const group = await groupsService.removeUserFromGroup(groupId, userId, req.user!.id);
@@ -164,7 +164,7 @@ export const removeUser = asyncHandler(async (req: AuthedRequest, res: Response)
   return res.json({ group });
 });
 
-export const updateGroup = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const updateGroup = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const groupId = req.params.id as string;
   const { name, description, password } = req.body as {
     name?: string;
