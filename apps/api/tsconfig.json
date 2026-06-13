@@ -4,7 +4,7 @@
     "rootDir": "src",
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "strict": false,                    // тимчасово
     "noImplicitAny": false,
     "skipLibCheck": true,
