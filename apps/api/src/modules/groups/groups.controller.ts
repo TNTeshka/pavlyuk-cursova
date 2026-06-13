@@ -1,4 +1,4 @@
-import { io } from "../../socket";
+import { io } from "../../socket.js";
 import type { AuthedRequest } from "../../middleware/auth.js";
 import type { Response, NextFunction } from "express";
 import * as groupsService from "../../services/groups.service.js";

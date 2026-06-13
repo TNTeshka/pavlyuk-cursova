@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from "express";
-import { io } from "../../socket";
+import { io } from "../../socket.js";
 import type { AuthedRequest } from "../../middleware/auth.js";
 import { TaskPriority, TaskStatus } from "@prisma/client";
 import * as tasksService from "../../services/tasks.service.js";
