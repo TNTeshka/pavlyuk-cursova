@@ -113,7 +113,7 @@ export const updateGroupTask = asyncHandler(async (req: AuthedRequest, res: Resp
     status: input.status,
     priority: input.priority,
     description: input.description,
-    deadline: input.deadline ? new Date(input.deadline) : undefined,
+    deadline: input.deadline ? input.deadline : undefined,
   });
 
   if (!task) throw new ApiError(404, "NOT_FOUND", "Task not found");
