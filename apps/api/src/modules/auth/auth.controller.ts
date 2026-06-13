@@ -1,9 +1,9 @@
-﻿import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { signAccessToken } from "../../utils/jwt.js";
 import * as authService from "../../services/auth.service.js";
 import { ApiError } from "../../middleware/error.js";
 
-export async function register(req: Request, res: Response) {
+export async function register(req: Request, res: Response, next: NextFunction) {
   const input = req.body as { email: string; password: string; username?: string; name?: string };
 
   const user = await authService.registerUser(input);
@@ -13,7 +13,7 @@ export async function register(req: Request, res: Response) {
   res.json({ user, token });
 }
 
-export async function login(req: Request, res: Response) {
+export async function login(req: Request, res: Response, next: NextFunction) {
   const input = req.body as { login: string; password: string };
 
   const user = await authService.verifyLogin(input);

@@ -1,4 +1,4 @@
-﻿import type { Response } from "express";
+import type { Response, NextFunction } from "express";
 import { io } from "../../socket";
 import type { AuthedRequest } from "../../middleware/auth.js";
 import { TaskPriority, TaskStatus } from "@prisma/client";
@@ -6,7 +6,7 @@ import * as tasksService from "../../services/tasks.service.js";
 import { ApiError } from "../../middleware/error.js";
 import { asyncHandler } from "../../middleware/asyncHandler.js";
 
-export const createTask = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const createTask = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const input = req.body as {
     title: string;
     description?: string | null;
@@ -25,7 +25,7 @@ export const createTask = asyncHandler(async (req: AuthedRequest, res: Response)
   return res.status(201).json({ task });
 });
 
-export const listTasks = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const listTasks = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const status = (req.query as any).status as TaskStatus | undefined;
   const priority = (req.query as any).priority as TaskPriority | undefined;
 
@@ -34,7 +34,7 @@ export const listTasks = asyncHandler(async (req: AuthedRequest, res: Response) 
   return res.json({ tasks });
 });
 
-export const getTask = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const getTask = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const id = req.params.id as string;
 
   const task = await tasksService.getTask({ id, userId: req.user!.id });
@@ -43,7 +43,7 @@ export const getTask = asyncHandler(async (req: AuthedRequest, res: Response) =>
   return res.json({ task });
 });
 
-export const updateTask = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const updateTask = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const id = req.params.id as string;
   const input = req.body as {
     title?: string;
@@ -69,7 +69,7 @@ export const updateTask = asyncHandler(async (req: AuthedRequest, res: Response)
   return res.json({ task });
 });
 
-export const deleteTask = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const deleteTask = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const id = req.params.id as string;
 
   const deleted = await tasksService.deleteTask({ id, userId: req.user!.id });
@@ -79,14 +79,13 @@ export const deleteTask = asyncHandler(async (req: AuthedRequest, res: Response)
   return res.status(204).send();
 });
 
-export const getTaskStats = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const getTaskStats = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const stats = await tasksService.getTaskStats(req.user!.id);
   return res.json(stats);
 });
 
 // Dashboard endpoint – returns overall task completion stats for the authenticated user
-export const getDashboardStats = asyncHandler(async (req: AuthedRequest, res: Response) => {
+export const getDashboardStats = asyncHandler(async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const stats = await tasksService.getDashboardStats(req.user!.id);
   return res.json(stats);
 });
-

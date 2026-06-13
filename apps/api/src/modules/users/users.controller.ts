@@ -1,7 +1,7 @@
-﻿import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import * as usersService from "../../services/users.service.js";
 
-export async function listUsers(req: Request, res: Response) {
+export async function listUsers(req: Request, res: Response, next: NextFunction) {
   const q = ((req.query as any).q as string | undefined) ?? "";
   const users = await usersService.listUsers({ q });
 
