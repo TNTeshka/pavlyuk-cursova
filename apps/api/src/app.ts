@@ -12,10 +12,20 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN ?? "http://localhost:5173",
-    credentials: false
+    origin: [
+      "http://localhost:5173",           // ← твій фронт зараз
+      "http://localhost:3000",
+      "https://pavlyuk-cursova-api.onrender.com",
+      // Коли задеплоїш фронт — додаси його адресу сюди, наприклад:
+      // "https://твій-фронт.vercel.app"
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
   })
 );
+
+app.options("*", cors());
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
